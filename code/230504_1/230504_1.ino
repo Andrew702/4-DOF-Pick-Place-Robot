@@ -1,0 +1,110 @@
+// PINS DEFINITIONS
+const int enPin=8;
+const int step1Pin = 2; //X.STEP
+const int dir1Pin = 5; // X.DIR
+const int step2Pin = 3; //Y.STEP
+const int dir2Pin = 6; // Y.DIR
+const int step3Pin = 4; //Z.STEP
+const int dir3Pin = 7; // Z.DIR
+
+const int stepsPerRev = 200;
+int pulseWidthMicros = 100; 
+int microsBtwnSteps = 1000;
+
+unsigned long previousTime[2] = {0}; // variable to store the previous time for each delay
+unsigned long delayTime[2] = {100, 1000}; // delay times in microseconds
+
+bool checkMicroDelay(int index) {
+  unsigned long currentTime = micros(); // get the current time in microseconds
+  if (currentTime - previousTime[index] >= delayTime[index]) { // check if the desired delay has elapsed
+    previousTime[index] = currentTime; // update the previous time
+    return true; // return true if the delay has elapsed
+  }
+  return false; // return false otherwise
+}
+
+void setup() {
+  // put your setup code here, to run once:
+
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+}
+
+
+void SteppersInitialize(void) //function to initialize steppers as output pins
+{
+  Serial.begin(9600);
+  pinMode(enPin, OUTPUT);
+  digitalWrite(enPin, LOW);
+
+  pinMode(step1Pin, OUTPUT);
+  pinMode(dir1Pin, OUTPUT);
+  pinMode(step2Pin, OUTPUT);
+  pinMode(dir2Pin, OUTPUT);
+  pinMode(step3Pin, OUTPUT);
+  pinMode(dir3Pin, OUTPUT);
+  Serial.println(F("CNC Shield Initialized"));
+}
+
+
+void StepperMove(int StepperNo, bool operating_option, float position, bool direction)
+{ 
+
+  // position is specified in mm, angle is in degrees
+  //if operating operation = 0 ---> angle
+  //if operating operation = 1 ---> distance
+  //if direction = 1 ---> clockwise/up/forward
+  //if direction = 0 ---> anticlockwise/down/backward
+  //---------------------------------------------------------------------------------------
+  unsigned int steps;
+  float angle;
+  int dirPin, stepPin;
+
+  if(operating_option) // in mm
+  {
+    angle = (360*position)/4; // lead is 4mm
+    steps = angle/1.8;
+  }
+  else
+  {
+    steps = position/1.8;
+  }
+
+  if(StepperNo == 1)
+  {
+    stepPin = step1Pin;
+    dirPin = dir1Pin;
+  }
+  else if(StepperNo == 2)
+  {
+    stepPin = step2Pin;
+    dirPin = dir2Pin;
+  }
+  else if(StepperNo == 3)
+  {
+    stepPin = step3Pin;
+    dirPin = dir3Pin;
+  }
+
+  if(direction)
+     digitalWrite(dirPin, HIGH);
+  else
+    digitalWrite(dirPin, LOW);
+
+  //start motion
+  for (static int i = 0; i < steps; i++)
+  {
+    if()digitalWrite(stepPin, HIGH);
+    if(checkMicroDelay(1))
+    {
+    digitalWrite(stepPin, LOW);
+    }
+    if(checkMicroDelay(1))
+
+    delayMicroseconds(millisBtwnSteps);
+  }
+}
+
